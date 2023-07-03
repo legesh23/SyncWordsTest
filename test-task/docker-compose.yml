@@ -1,0 +1,59 @@
+version: "3.7"
+
+networks:
+    app-network:
+        ipam:
+            driver: default
+            config:
+                - subnet: 172.28.0.0/16
+volumes:
+    pgdata: ~
+
+services:
+    app:
+        container_name: app
+        build:
+            context: ./
+            dockerfile: Dockerfile
+        image: php-laravel-7.0
+        restart: unless-stopped
+        tty: true
+        working_dir: /var/www
+        volumes:
+            - ./:/var/www
+        networks:
+            app-network:
+                ipv4_address: 172.28.1.4
+
+    postgres:
+        build:
+            context: ./deploy/pgsql
+            dockerfile: Dockerfile
+        image: "postgres-tutorials"
+        container_name: test-postgres
+        environment:
+            POSTGRES_DB: syncwords_api
+            POSTGRES_USER: root
+            POSTGRES_PASSWORD: password
+        volumes:
+            - pgdata:/data/postgres-tuto
+        ports:
+            - "5432:5432"
+        restart: unless-stopped
+        networks:
+            app-network:
+                ipv4_address: 172.28.1.2
+
+    nginx:
+        image: nginx:1.19.8-alpine
+        container_name: nginx
+        restart: unless-stopped
+        tty: true
+        ports:
+            - "8100:80"
+        volumes:
+            - ./:/var/www
+            - ./deploy/nginx/conf:/etc/nginx/conf.d
+        networks:
+            app-network:
+                ipv4_address: 172.28.1.3
