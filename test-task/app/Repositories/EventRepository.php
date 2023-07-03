@@ -14,24 +14,24 @@ class EventRepository
         // return Event::whereId($id)->whereOrganizationId(request()->user()->id)->first();
     }
 
-    public function delete($id): ?Event
+    public function delete($id): bool
     {
-        return Event::where($id)->delete();
+        return Event::whereId($id)->delete();
     }
 
     public function updateRows(Event $event, array $params): bool
     {
-        return $event->update([
-            $params
-        ]);
+        foreach($params as $key => $value) {
+            $event[$key] = $value;
+        }
+        return $event->save();
     }
 
     public function update(Event $event, array $params): bool
     {
-        return $event->update([
-            'event_title' => $params['event_title'],
-            'event_start_date' => $params['event_start_date'],
-            'event_end_date' => $params['event_end_date']
-        ]);
+        $event->event_title = $params['event_title'];
+        $event->event_start_date = $params['event_start_date'];
+        $event->event_end_date = $params['event_end_date'];
+        return $event->save();
     }
 }

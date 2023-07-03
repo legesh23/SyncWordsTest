@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\EventPatchUpdateRequest;
+use App\Http\Requests\EventUpdateRequest;
 use App\Http\Resources\EventResource;
 use App\Repositories\EventRepository;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,20 +31,28 @@ class EventsController extends Controller
         return new EventResource($event);
     }
 
-    public function updateAll($id, $params): \Illuminate\Http\JsonResponse
+    public function updateAll(EventUpdateRequest $request, $id): \Illuminate\Http\JsonResponse
     {
         $event = $this->repository->getByID($id);
-        $this->repository->updateRows($event, $params);
+        $this->repository->update($event, $request->only([
+            'event_title',
+            'event_start_date',
+            'event_end_date'
+        ]));
         return response()->json([
             'code' => Response::HTTP_OK,
             'status' => 'success',
         ]);
     }
 
-    public function update(): \Illuminate\Http\JsonResponse
+    public function update(EventPatchUpdateRequest $request, $id): \Illuminate\Http\JsonResponse
     {
         $event = $this->repository->getByID($id);
-        $this->repository->update($event, $params);
+        $this->repository->updateRows($event, $request->only([
+            'event_title',
+            'event_start_date',
+            'event_end_date'
+        ]));
         return response()->json([
             'code' => Response::HTTP_OK,
             'status' => 'success',
