@@ -21,7 +21,7 @@ class EventRepository
 
     public function updateRows(Event $event, array $params): bool
     {
-        foreach($params as $key => $value) {
+        foreach ($params as $key => $value) {
             $event[$key] = $value;
         }
         return $event->save();

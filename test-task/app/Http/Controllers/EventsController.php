@@ -22,7 +22,7 @@ class EventsController extends Controller
     public function show(string $eventID): \Illuminate\Http\JsonResponse|EventResource
     {
         $event = $this->repository->getByID($eventID);
-        if(!$event) {
+        if (!$event) {
             return response()->json([
                 'code' => Response::HTTP_NOT_FOUND,
                 'status' => 'not found',
@@ -34,11 +34,14 @@ class EventsController extends Controller
     public function updateAll(EventUpdateRequest $request, $id): \Illuminate\Http\JsonResponse
     {
         $event = $this->repository->getByID($id);
-        $this->repository->update($event, $request->only([
-            'event_title',
-            'event_start_date',
-            'event_end_date'
-        ]));
+        $this->repository->update(
+            $event,
+            $request->only([
+                'event_title',
+                'event_start_date',
+                'event_end_date'
+            ])
+        );
         return response()->json([
             'code' => Response::HTTP_OK,
             'status' => 'success',
@@ -48,11 +51,14 @@ class EventsController extends Controller
     public function update(EventPatchUpdateRequest $request, $id): \Illuminate\Http\JsonResponse
     {
         $event = $this->repository->getByID($id);
-        $this->repository->updateRows($event, $request->only([
-            'event_title',
-            'event_start_date',
-            'event_end_date'
-        ]));
+        $this->repository->updateRows(
+            $event,
+            $request->only([
+                'event_title',
+                'event_start_date',
+                'event_end_date'
+            ])
+        );
         return response()->json([
             'code' => Response::HTTP_OK,
             'status' => 'success',
